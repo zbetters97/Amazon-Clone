@@ -65,3 +65,11 @@ export function updateQuantity(productId, newQuantity) {
     return false;
   }
 }
+
+export function updateDeliveryOption(productId, deliveryId) {
+  cart.forEach((cartItem) => {
+    cartItem.productId === productId &&
+      (cartItem.deliveryOptionId = deliveryId);
+  });
+  saveToStorage();
+}
