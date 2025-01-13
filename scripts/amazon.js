@@ -1,4 +1,4 @@
-import { cart, addToCart } from "../data/cart.js";
+import { cart, addToCart, calculateCartQuantity } from "../data/cart.js";
 import { products } from "../data/products.js";
 import formatCurrency from "./utils/money.js";
 
@@ -80,12 +80,8 @@ $(document).ready(function () {
 });
 
 function updateCartQuantity() {
-  let cartQuantity = 0;
-  cart.forEach((product) => {
-    cartQuantity += product.quantity;
-  });
-
-  $(".cart-quantity").html(cartQuantity);
+  const cartQuantity = calculateCartQuantity();
+  cartQuantity > 0 && $(".cart-quantity").html(cartQuantity);
 }
 
 function showAddToCartMsg(pId) {

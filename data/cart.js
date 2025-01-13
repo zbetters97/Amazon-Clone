@@ -26,3 +26,41 @@ export function removeFromCart(pId) {
 
   saveToStorage();
 }
+
+export function calculateCartQuantity() {
+  let cartQuantity = 0;
+  cart.forEach((product) => {
+    cartQuantity += product.quantity;
+  });
+
+  return cartQuantity;
+}
+
+export function calculateTotalPriceCents(products) {
+  let totalPrice = 0;
+
+  cart.forEach((cartItem) => {
+    const product =
+      products[
+        products.findIndex((product) => product.id == cartItem.productId)
+      ] || null;
+
+    totalPrice += cartItem.quantity * product.priceCents;
+  });
+
+  return totalPrice;
+}
+
+export function updateQuantity(productId, newQuantity) {
+  if (newQuantity > 0 && newQuantity < 1000) {
+    cart.forEach((cartItem) => {
+      cartItem.productId === productId &&
+        (cartItem.quantity = Number(newQuantity));
+    });
+    saveToStorage();
+
+    return true;
+  } else {
+    return false;
+  }
+}
