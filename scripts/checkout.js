@@ -50,7 +50,7 @@ $(document).ready(function () {
               <span class="update-quantity-link link-primary" data-product-id="${id}">
                 Update
               </span>
-              <input class="quantity-input" data-product-id="${id}">
+              <input class="quantity-input quantity-${id}" data-product-id="${id}">
               <span class="save-quantity-link link-primary" data-product-id="${id}">Save</span>
               <span class="delete-quantity-link link-primary delete-link" data-product-id=${id}>
                 Delete
@@ -136,7 +136,7 @@ $(document).ready(function () {
 });
 
 function updateItemQuantity(pId) {
-  const newQuantity = document.querySelector(".quantity-input") || null;
+  const newQuantity = document.querySelector(`.quantity-${pId}`) || null;
 
   if (updateQuantity(pId, newQuantity.value)) {
     updateCartQuantity();
