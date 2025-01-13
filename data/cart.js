@@ -14,6 +14,7 @@ export function addToCart(pId) {
     ? cart.push({
         productId: pId,
         quantity: quantity,
+        deliveryOptionId: "1",
       })
     : (cart[index].quantity += quantity);
 
