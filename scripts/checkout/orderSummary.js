@@ -6,11 +6,13 @@ import {
 } from "../../data/cart.js";
 import { getProduct, products } from "../../data/products.js";
 import {
+  calculateDeliveryDate,
   deliveryOptions,
   getDeliveryOption,
 } from "../../data/deliveryOptions.js";
 import formatCurrency from "../utils/money.js";
-import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
+import { renderPaymentSummary } from "./paymentSummary.js";
+import renderCheckoutHeader from "./checkoutHeader.js";
 
 export function renderOrderSummary() {
   let cartSummaryHTML = "";
@@ -23,8 +25,9 @@ export function renderOrderSummary() {
     const price = formatCurrency(product.priceCents);
     const quantity = cartItem.quantity;
 
-    const deliveryDays = getDeliveryOption(cartItem.deliveryOptionId).days;
-    const date = dayjs().add(deliveryDays, "days").format("dddd, MMMM D");
+    const date = calculateDeliveryDate(
+      getDeliveryOption(cartItem.deliveryOptionId)
+    );
 
     cartSummaryHTML += `
       <div class="cart-item-container cart-item-container-${id}">
@@ -62,7 +65,7 @@ export function renderOrderSummary() {
             <div class="delivery-options-title">
               Choose a delivery option:
             </div>           
-            ${deliveryOptionsHTML(cartItem)}
+              ${deliveryOptionsHTML(cartItem)}
           </div>
         </div>
       </div>
@@ -81,6 +84,9 @@ export function renderOrderSummary() {
   document.querySelectorAll(".save-quantity-link").forEach((link) => {
     link.addEventListener("click", () => {
       updateItemQuantity(link.dataset.productId);
+
+      renderCheckoutHeader();
+      renderPaymentSummary();
     });
   });
 
@@ -88,6 +94,9 @@ export function renderOrderSummary() {
     link.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         updateItemQuantity(link.dataset.productId);
+
+        renderCheckoutHeader();
+        renderPaymentSummary();
       }
     });
   });
@@ -96,7 +105,10 @@ export function renderOrderSummary() {
     link.addEventListener("click", () => {
       const pId = link.dataset.productId;
       removeFromCart(pId);
-      document.querySelector(`.cart-item-container-${pId}`).remove();
+
+      renderCheckoutHeader();
+      renderOrderSummary();
+      renderPaymentSummary();
     });
   });
 
@@ -104,7 +116,10 @@ export function renderOrderSummary() {
     element.addEventListener("click", () => {
       const { productId, deliveryOptionId } = element.dataset;
       updateDeliveryOption(productId, deliveryOptionId);
+
+      renderCheckoutHeader();
       renderOrderSummary();
+      renderPaymentSummary();
     });
   });
 }
@@ -117,9 +132,7 @@ function deliveryOptionsHTML(cartItem) {
   deliveryOptions.forEach((deliveryOption) => {
     const deliveryId = deliveryOption.id;
 
-    const date = dayjs()
-      .add(deliveryOption.days, "days")
-      .format("dddd, MMMM D");
+    const date = calculateDeliveryDate(deliveryOption);
 
     const price =
       deliveryOption.priceCents === 0
@@ -177,7 +190,4 @@ function updateItemTotal() {
 
     totalPrice += cartItem.quantity * product.priceCents;
   });
-
-  document.querySelector(".js-total-items").innerHTML =
-    `$${formatCurrency(totalPrice)}` || "$0.00";
 }
