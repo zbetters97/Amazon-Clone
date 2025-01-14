@@ -1,15 +1,11 @@
-import { cart, addToCart, calculateCartQuantity } from "./data/cart.js";
+import cart from "./data/cart.js";
 import { products } from "./data/products.js";
-import formatCurrency from "./utils/money.js";
 
 $(document).ready(function () {
   updateCartQuantity();
 
   let productsHTML = "";
   products.forEach((product) => {
-    const stars = product.rating.stars * 10;
-    const price = formatCurrency(product.priceCents);
-
     productsHTML += `
       <div class="product-container">
         <div class="product-image-container">
@@ -26,13 +22,15 @@ $(document).ready(function () {
         <div class="product-rating-container">
           <img
             class="product-rating-stars"
-            src="images/ratings/rating-${stars}.png"
+            src="${product.getStarsURL()}"
           />
-          <div class="product-rating-count link-primary">${product.rating.count}</div>
+          <div class="product-rating-count link-primary">
+            ${product.rating.count}
+          </div>
         </div>
 
         <div class="product-price">
-          $${price}
+          ${product.getPrice()}
         </div>
 
         <div class="product-quantity-container">
@@ -49,6 +47,8 @@ $(document).ready(function () {
             <option value="10">10</option>
           </select>
         </div>
+
+        ${product.extraInfoHTML()}
 
         <div class="product-spacer"></div>
 
@@ -72,7 +72,7 @@ $(document).ready(function () {
     button.addEventListener("click", () => {
       // productId converted from data-product-id attribute
       const pId = button.dataset.productId;
-      addToCart(pId);
+      cart.addToCart(pId);
       updateCartQuantity();
       showAddToCartMsg(pId);
     });
@@ -80,7 +80,7 @@ $(document).ready(function () {
 });
 
 function updateCartQuantity() {
-  const cartQuantity = calculateCartQuantity();
+  const cartQuantity = cart.calculateCartQuantity();
   cartQuantity > 0 && $(".cart-quantity").html(cartQuantity);
 }
 

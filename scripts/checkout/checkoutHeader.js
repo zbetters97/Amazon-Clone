@@ -1,4 +1,4 @@
-import { calculateCartQuantity } from "../data/cart.js";
+import cart from "../data/cart.js";
 
 export default function renderCheckoutHeader() {
   let headerHTML = `
@@ -14,7 +14,7 @@ export default function renderCheckoutHeader() {
       </div>
 
       <div class="checkout-header-middle-section">
-        Checkout (<a class="return-to-home-link" href="amazon.html">${calculateCartQuantity()} items</a>)
+        Checkout (<a class="return-to-home-link" href="amazon.html">${cart.calculateCartQuantity()} items</a>)
       </div>
 
       <div class="checkout-header-right-section">

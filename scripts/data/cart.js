@@ -1,80 +1,93 @@
-export let cart;
+class Cart {
+  cartItems;
 
-loadFromStorage();
+  // private value
+  #localStorageKey;
 
-export function loadFromStorage() {
-  cart = JSON.parse(localStorage.getItem("cart")) || [];
-}
+  constructor(localStorageKey) {
+    this.#localStorageKey = localStorageKey;
+    this.#loadFromStorage();
 
-function saveToStorage() {
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
+    console.log("called");
+  }
 
-export function addToCart(pId) {
-  let quantity = document.querySelector(".data-quantity-selector-" + pId);
-  quantity ? (quantity = Number(quantity.value)) : (quantity = 1);
+  // private method
+  #loadFromStorage() {
+    this.cartItems =
+      JSON.parse(localStorage.getItem(this.#localStorageKey)) || [];
+  }
+  saveToStorage() {
+    localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItems));
+  }
 
-  const index = cart.findIndex((p) => p.productId == pId);
-  index === -1
-    ? cart.push({
-        productId: pId,
-        quantity: quantity,
-        deliveryOptionId: "1",
-      })
-    : (cart[index].quantity += quantity);
+  addToCart(pId) {
+    let quantity = document.querySelector(".data-quantity-selector-" + pId);
+    quantity ? (quantity = Number(quantity.value)) : (quantity = 1);
 
-  saveToStorage();
-}
+    const index = this.cartItems.findIndex((p) => p.productId == pId);
+    index === -1
+      ? this.cartItems.push({
+          productId: pId,
+          quantity: quantity,
+          deliveryOptionId: "1",
+        })
+      : (this.cartItems[index].quantity += quantity);
 
-export function removeFromCart(pId) {
-  const index = cart.findIndex((p) => p.productId == pId);
-  index !== -1 && cart.splice(index, 1);
+    this.saveToStorage();
+  }
+  removeFromCart(pId) {
+    const index = this.cartItems.findIndex((p) => p.productId == pId);
+    index !== -1 && this.cartItems.splice(index, 1);
 
-  saveToStorage();
-}
+    this.saveToStorage();
+  }
 
-export function calculateCartQuantity() {
-  let cartQuantity = 0;
-  cart.forEach((product) => {
-    cartQuantity += product.quantity;
-  });
+  updateQuantity(productId, newQuantity) {
+    if (newQuantity > 0 && newQuantity < 1000) {
+      this.cartItems.forEach((cartItem) => {
+        cartItem.productId === productId &&
+          (cartItem.quantity = Number(newQuantity));
+      });
 
-  return cartQuantity;
-}
+      this.saveToStorage();
 
-export function calculateTotalPriceCents(products) {
-  let totalPrice = 0;
-
-  cart.forEach((cartItem) => {
-    const product =
-      products[
-        products.findIndex((product) => product.id == cartItem.productId)
-      ] || null;
-
-    totalPrice += cartItem.quantity * product.priceCents;
-  });
-
-  return totalPrice;
-}
-
-export function updateQuantity(productId, newQuantity) {
-  if (newQuantity > 0 && newQuantity < 1000) {
-    cart.forEach((cartItem) => {
-      cartItem.productId === productId &&
-        (cartItem.quantity = Number(newQuantity));
+      return true;
+    } else {
+      return false;
+    }
+  }
+  calculateCartQuantity() {
+    let cartQuantity = 0;
+    this.cartItems.forEach((product) => {
+      cartQuantity += product.quantity;
     });
-    saveToStorage();
 
-    return true;
-  } else {
-    return false;
+    return cartQuantity;
+  }
+
+  calculateTotalPriceCents(products) {
+    let totalPrice = 0;
+
+    this.cartItems.forEach((cartItem) => {
+      const product =
+        products[
+          products.findIndex((product) => product.id == cartItem.productId)
+        ] || null;
+
+      totalPrice += cartItem.quantity * product.priceCents;
+    });
+
+    return totalPrice;
+  }
+
+  updateDeliveryOption(productId, deliveryId) {
+    this.cartItems.forEach((cartItem) => {
+      cartItem.productId === productId &&
+        (cartItem.deliveryOptionId = deliveryId);
+    });
+
+    this.saveToStorage();
   }
 }
-
-export function updateDeliveryOption(productId, deliveryId) {
-  cart.forEach((cartItem) => {
-    cartItem.productId === productId &&
-      (cartItem.deliveryOptionId = deliveryId);
-  });
-  saveToStorage();
-}
+let cart = new Cart("cart");
+export default cart;
