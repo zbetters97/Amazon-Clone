@@ -1,13 +1,18 @@
-export const cart = JSON.parse(localStorage.getItem("cart")) || [];
+export let cart;
+
+loadFromStorage();
+
+export function loadFromStorage() {
+  cart = JSON.parse(localStorage.getItem("cart")) || [];
+}
 
 function saveToStorage() {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
 export function addToCart(pId) {
-  const quantity = Number(
-    document.querySelector(".data-quantity-selector-" + pId).value
-  );
+  let quantity = document.querySelector(".data-quantity-selector-" + pId);
+  quantity ? (quantity = Number(quantity.value)) : (quantity = 1);
 
   const index = cart.findIndex((p) => p.productId == pId);
   index === -1

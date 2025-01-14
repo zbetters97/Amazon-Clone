@@ -1,4 +1,4 @@
-import { calculateCartQuantity } from "../../data/cart.js";
+import { calculateCartQuantity } from "../data/cart.js";
 
 export default function renderCheckoutHeader() {
   let headerHTML = `
