@@ -2,7 +2,7 @@ import cart from "../data/cart.js";
 import { getDeliveryOption } from "../data/deliveryOptions.js";
 import { getProduct } from "../data/products.js";
 import formatCurrency from "../utils/money.js";
-import Orders from "../data/orders.js";
+import { addOrder } from "../data/orders.js";
 
 export default function renderPaymentSummary() {
   let productPriceCents = 0;
@@ -84,15 +84,15 @@ async function submitOrder() {
     });
 
     let order = await response.json();
-    const orders = new Orders("myOrders");
-    orders.addOrder(order);
 
-    console.log(localStorage.getItem("myOrders"));
-
-    cart.cartItems = [];
+    if (order.errorMessage) {
+      throw "Error! Cart is empty!";
+    } else {
+      addOrder(order);
+      cart.emptyCart();
+      window.location.href = `orders.html`;
+    }
   } catch (err) {
     console.log(err);
   }
-
-  window.location.href = "orders.html";
 }

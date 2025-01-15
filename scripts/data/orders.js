@@ -1,32 +1,21 @@
-export default class Orders {
-  #allOrders = [];
+export const orders = JSON.parse(localStorage.getItem("orders")) || [];
 
-  // private value
-  #localStorageKey;
+export function addOrder(order) {
+  order && (orders.unshift(order), saveToStorage());
+}
 
-  constructor(localStorageKey) {
-    this.#localStorageKey = localStorageKey;
-  }
+function saveToStorage() {
+  localStorage.setItem("orders", JSON.stringify(orders));
+}
 
-  #saveToStorage() {
-    localStorage.setItem(
-      this.#localStorageKey,
-      JSON.stringify(this.#allOrders)
-    );
-  }
+export function getOrder(orderId) {
+  const order = orders.findIndex((o) => o.id == orderId) || orders[0];
+  return order;
+}
 
-  addOrder(order) {
-    // adds order to front of array
-    this.#allOrders.unshift(order);
-    this.#saveToStorage();
-  }
-
-  getAllOrders() {
-    return this.#allOrders;
-  }
-
-  removeAllOrders() {
-    this.#allOrders = [];
-    localStorage.removeItem(this.#localStorageKey);
-  }
+export function getOrderProduct(order, productId) {
+  const product =
+    order.products.findIndex((p) => p.productId == productId) ||
+    order.products[0];
+  return product;
 }

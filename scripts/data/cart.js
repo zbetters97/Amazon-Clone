@@ -9,7 +9,6 @@ export class Cart {
     this.#loadFromStorage();
   }
 
-  // private method
   #loadFromStorage() {
     this.cartItems =
       JSON.parse(localStorage.getItem(this.#localStorageKey)) || [];
@@ -37,6 +36,10 @@ export class Cart {
     const index = this.cartItems.findIndex((p) => p.productId == pId);
     index !== -1 && this.cartItems.splice(index, 1);
 
+    this.saveToStorage();
+  }
+  emptyCart() {
+    this.cartItems = [];
     this.saveToStorage();
   }
 
