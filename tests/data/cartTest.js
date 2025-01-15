@@ -1,4 +1,4 @@
-import { addToCart, cart, loadFromStorage } from "../../scripts/data/cart.js";
+import cart from "../../scripts/data/cart.js";
 
 describe("test suite: cart", () => {
   describe("add to cart", () => {
@@ -8,44 +8,34 @@ describe("test suite: cart", () => {
       // replaces localStorage setItem() with fake empty method
       spyOn(Object.getPrototypeOf(localStorage), "setItem");
 
-      // fills localStorage getItem() with fake empty object
-      spyOn(Object.getPrototypeOf(localStorage), "getItem").and.callFake(() => {
-        return JSON.stringify([]);
-      });
-      loadFromStorage();
+      cart.cartItems = [];
+      cart.addToCart(testProductId);
 
-      addToCart(testProductId);
-
-      expect(cart.length).toEqual(1);
+      expect(cart.cartItems.length).toEqual(1);
       expect(localStorage.setItem).toHaveBeenCalledTimes(1);
 
-      expect(cart[0].productId).toEqual(testProductId);
-      expect(cart[0].quantity).toEqual(1);
+      expect(cart.cartItems[0].productId).toEqual(testProductId);
+      expect(cart.cartItems[0].quantity).toEqual(1);
     });
 
     it("existing product", () => {
       // replaces localStorage setItem() with fake empty method
       spyOn(Object.getPrototypeOf(localStorage), "setItem");
 
-      // fills localStorage getItem() with fake cart object
-      spyOn(Object.getPrototypeOf(localStorage), "getItem").and.callFake(() => {
-        return JSON.stringify([
-          {
-            productId: testProductId,
-            quantity: 1,
-            deliveryOptionId: "1",
-          },
-        ]);
-      });
-      loadFromStorage();
+      cart.cartItems = [
+        {
+          productId: testProductId,
+          quantity: 1,
+          deliveryOptionId: "1",
+        },
+      ];
+      cart.addToCart(testProductId);
 
-      addToCart(testProductId);
-
-      expect(cart.length).toEqual(1);
+      expect(cart.cartItems.length).toEqual(1);
       expect(localStorage.setItem).toHaveBeenCalledTimes(1);
 
-      expect(cart[0].productId).toEqual(testProductId);
-      expect(cart[0].quantity).toEqual(2);
+      expect(cart.cartItems[0].productId).toEqual(testProductId);
+      expect(cart.cartItems[0].quantity).toEqual(2);
     });
   });
 });

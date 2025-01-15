@@ -1,10 +1,17 @@
-import { renderOrderSummary } from "../../scripts/checkout/orderSummary.js";
-import { loadFromStorage, cart } from "../../scripts/data/cart.js";
+import renderOrderSummary from "../../scripts/checkout/orderSummary.js";
+import cart from "../../scripts/data/cart.js";
+import { loadProducts } from "../../scripts/data/products.js";
 
 describe("test suite: renderOrderSummary", () => {
   const pId1 = "15b6fc6f-327a-4ec4-896f-486349e85a3d";
   const pId2 = "e43638ce-6aa0-4b85-b27f-e1d07eb678c6";
 
+  // done forces beforeAll to wait for inner function to finish
+  beforeAll((done) => {
+    loadProducts(() => {
+      done();
+    });
+  });
   beforeEach(() => {
     document.querySelector(".js-test-container").innerHTML = `
       <div class="checkout-header"></div>
@@ -15,23 +22,19 @@ describe("test suite: renderOrderSummary", () => {
     // replaces localStorage setItem() with fake empty method
     spyOn(Object.getPrototypeOf(localStorage), "setItem");
 
-    // fills localStorage getItem() with fake cart object
-    spyOn(Object.getPrototypeOf(localStorage), "getItem").and.callFake(() => {
-      return JSON.stringify([
-        {
-          productId: pId1,
-          quantity: 3,
-          deliveryOptionId: "1",
-        },
-        {
-          productId: pId2,
-          quantity: 2,
-          deliveryOptionId: "2",
-        },
-      ]);
-    });
+    cart.cartItems = [
+      {
+        productId: pId1,
+        quantity: 3,
+        deliveryOptionId: "1",
+      },
+      {
+        productId: pId2,
+        quantity: 2,
+        deliveryOptionId: "2",
+      },
+    ];
 
-    loadFromStorage();
     renderOrderSummary();
   });
   afterEach(() => {
@@ -61,7 +64,7 @@ describe("test suite: renderOrderSummary", () => {
     expect(document.querySelector(`.cart-item-container-${pId2}`)).not.toEqual(
       null
     );
-    expect(cart.length).toEqual(1);
-    expect(cart[0].productId).toEqual(pId2);
+    expect(cart.cartItems.length).toEqual(1);
+    expect(cart.cartItems[0].productId).toEqual(pId2);
   });
 });

@@ -1,10 +1,15 @@
 import cart from "./data/cart.js";
-import { products } from "./data/products.js";
+import { products, loadProducts } from "./data/products.js";
 
 $(document).ready(function () {
+  // load http request then run callback (passed function)
+  loadProducts(renderProductsGrid);
   updateCartQuantity();
+});
 
+function renderProductsGrid() {
   let productsHTML = "";
+
   products.forEach((product) => {
     productsHTML += `
       <div class="product-container">
@@ -77,7 +82,7 @@ $(document).ready(function () {
       showAddToCartMsg(pId);
     });
   });
-});
+}
 
 function updateCartQuantity() {
   const cartQuantity = cart.calculateCartQuantity();

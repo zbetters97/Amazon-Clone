@@ -1,4 +1,4 @@
-class Cart {
+export class Cart {
   cartItems;
 
   // private value
@@ -7,8 +7,6 @@ class Cart {
   constructor(localStorageKey) {
     this.#localStorageKey = localStorageKey;
     this.#loadFromStorage();
-
-    console.log("called");
   }
 
   // private method
@@ -89,5 +87,6 @@ class Cart {
     this.saveToStorage();
   }
 }
+
 let cart = new Cart("cart");
 export default cart;
