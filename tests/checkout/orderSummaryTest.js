@@ -8,7 +8,7 @@ describe("test suite: renderOrderSummary", () => {
 
   // done forces beforeAll to wait for inner function to finish
   beforeAll((done) => {
-    loadProducts(() => {
+    loadProducts().then(() => {
       done();
     });
   });

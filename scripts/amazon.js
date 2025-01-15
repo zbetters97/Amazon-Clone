@@ -2,8 +2,10 @@ import cart from "./data/cart.js";
 import { products, loadProducts } from "./data/products.js";
 
 $(document).ready(function () {
-  // load http request then run callback (passed function)
-  loadProducts(renderProductsGrid);
+  loadProducts().then(() => {
+    renderProductsGrid();
+  });
+
   updateCartQuantity();
 });
 
