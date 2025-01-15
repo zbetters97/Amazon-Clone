@@ -2,12 +2,25 @@ import cart from "./data/cart.js";
 import { products, loadProducts } from "./data/products.js";
 
 $(document).ready(function () {
+  updateCartQuantity();
+  loadPage();
+});
+
+/* SHORTCUT FOR THE FOLLOWING:
   loadProducts().then(() => {
     renderProductsGrid();
-  });
+  }); 
+*/
+async function loadPage() {
+  // waits for loadProducts() before continuing
+  try {
+    await loadProducts();
+  } catch (err) {
+    console.log(err);
+  }
 
-  updateCartQuantity();
-});
+  renderProductsGrid();
+}
 
 function renderProductsGrid() {
   let productsHTML = "";

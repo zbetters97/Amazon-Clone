@@ -5,16 +5,27 @@ import { loadProducts } from "./data/products.js";
 
 $(document).ready(function () {
   renderCheckoutHeader();
+  loadPage();
+});
 
-  // will not run .then() until resolve() is called
+/* SHORTCUT FOR THE FOLLOWING:
   new Promise((resolve) => {
-    // will not run resolve() until response is given from XMLHTTP request
     loadProducts().then(() => {
-      // resolve can give .then() a parameter
-      resolve("my string");
+      resolve();
     });
-  }).then((stringParam) => {
+  }).then(() => {
     renderOrderSummary();
     renderPaymentSummary();
-  });
-});
+  }); 
+*/
+async function loadPage() {
+  // waits for loadProducts() before continuing
+  try {
+    await loadProducts();
+  } catch (err) {
+    console.log(err);
+  }
+
+  renderOrderSummary();
+  renderPaymentSummary();
+}

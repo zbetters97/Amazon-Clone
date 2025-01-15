@@ -94,13 +94,15 @@ export function loadProducts() {
           return new Product(productDetails);
         }
       });
+    })
+    .catch((err) => {
+      console.log(err);
     });
 
   return promise;
 }
 
-// xml version of loadProducts(less efficient)
-/*
+/* XML VERSION OF loadProducts (LESS EFFICIENT)
 export function loadProducts(fun) {
   const xhr = new XMLHttpRequest();
 
@@ -119,6 +121,9 @@ export function loadProducts(fun) {
     fun();
   });
 
+  xhr.addEventListener("error", (err) => {
+    console.log("error! please try again later" + err);
+  };
   xhr.open("GET", "https://supersimplebackend.dev/products");
   xhr.send();
 }
